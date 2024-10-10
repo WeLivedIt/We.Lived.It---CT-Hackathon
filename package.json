@@ -1,32 +1,30 @@
 {
-  "name": "peace-keeper_ai",
-  "version": "0.1.0",
+  "name": "we-lived-it",
   "private": true,
+  "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
-    "@radix-ui/react-slot": "^1.1.0",
-    "class-variance-authority": "^0.7.0",
-    "clsx": "^2.1.1",
+    "@gitcoinco/passport-sdk-reader": "^0.1.4",
+    "@headlessui/react": "^2.1.9",
+    "@rainbow-me/rainbowkit": "^2.1.7",
+    "@tanstack/react-query": "^5.51.11",
     "lucide-react": "^0.451.0",
-    "next": "14.2.15",
-    "react": "^18",
-    "react-dom": "^18",
+    "next": "^14.2.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-toastify": "^10.0.5",
     "tailwind-merge": "^2.5.3",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "viem": "2.17.0",
+    "wagmi": "^2.12.9"
   },
   "devDependencies": {
-    "@shadcn/ui": "^0.0.4",
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.13",
-    "typescript": "^5"
+    "@types/node": "^20.14.8",
+    "@types/react": "^18.3.5",
+    "typescript": "5.5.2"
   }
 }
