@@ -6,11 +6,13 @@ import { useAccount } from "wagmi";
 import { PassportReader } from "@gitcoinco/passport-sdk-reader";
 import { HateSpeechScanner } from "../components/modal/hateSpeechScanner";
 import { SubmitExperience } from "../components/modal/submitExperience";
+import { CommunityConfiguration } from "../components/modal/CommunityConfiguration";
 
 export default function Dashboard() {
   const { address, chainId } = useAccount();
   const [openHTScanner, setOpenHTScanner] = useState<boolean>(false);
   const [openExperience, setOpenExperience] = useState<boolean>(false);
+  const [openCommunityConfigurations, setCommunityConfiguration]= useState<boolean>(false);
   const [openCommunityVote, setCommunityVote] = useState<boolean>(false);
   const [openLiveExperience, setLiveExperience] = useState<boolean>(false);
 
@@ -33,6 +35,13 @@ export default function Dashboard() {
   }, [address]);
 
   const cardData = [
+    {
+      title: "Community Settings",
+      description: "Configure Ai Model",
+      buttonText: "Scan Text",
+      icon: <BarChart className="h-8 w-8 text-blue-500" />,
+      action: () => setCommunityConfiguration(true),
+    },
     {
       title: "Hate Speech Scanner",
       description: "Analyze text for potential hate speech",
@@ -106,7 +115,7 @@ export default function Dashboard() {
           {cardData.map((card, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-2xl shadow-md overflow-hidden"
             >
               <div className="p-6">
                 <div className="mb-4">
@@ -219,6 +228,12 @@ export default function Dashboard() {
         <SubmitExperience
           isOpen={openExperience}
           onClose={() => setOpenExperience(false)}
+        />
+      )}
+      {openCommunityConfigurations && (
+        <CommunityConfiguration
+          isOpen={openCommunityConfigurations}
+          onClose={() => setCommunityConfiguration(false)}
         />
       )}
     </div>
