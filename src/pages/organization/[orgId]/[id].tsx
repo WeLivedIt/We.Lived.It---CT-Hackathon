@@ -20,8 +20,6 @@ export default function Dashboard() {
 
   const { orgId, id } = router.query;
 
-    document.title = "WelivedIt | Dashboard";
-
   interface Organization {
     id: string; 
     communityType: string;
