@@ -77,7 +77,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <DialogPanel
             transition
-            className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+            className="relative transform overflow-hidden rounded-2xl bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
           >
             <div className="max-w-2xl mx-auto p-4 border rounded-lg shadow-lg">
               <div className="mb-6">
