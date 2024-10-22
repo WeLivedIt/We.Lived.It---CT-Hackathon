@@ -1,35 +1,61 @@
-"use client";
-
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BarChart, AlertTriangle, CheckCircle } from "lucide-react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 
-const mockAnalyzeText = async (
-  text: string
-): Promise<{ score: number; category: string }> => {
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  const score = Math.random();
-  let category = "Neutral";
-  if (score > 0.7) category = "Hate Speech";
-  else if (score > 0.4) category = "Potentially Offensive";
-  return { score, category };
+const cleanClassificationString = (classificationStr: string) => {
+  // Remove the outer quotes and convert it into an array-like structure
+  const cleanedStr = classificationStr.replace(/(^"|"$)/g, "");
+
+  // Now we can safely evaluate it to convert into an array
+  const classificationArray = eval(cleanedStr); // Be cautious using eval, ensure input is sanitized
+
+  return classificationArray;
 };
 
-type hateSpeechScannerprops = {
+const analyzeText = async (
+  text: string
+): Promise<{ classify: string; definition: string }> => {
+  const response = await fetch("https://hs-server.onrender.com/classify-hs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ message: text }),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to analyze text");
+  }
+
+  const data = await response.json();
+
+  const { classification } = data;
+
+  const cleanedClassification = cleanClassificationString(classification);
+
+  console.log(cleanedClassification[0], "223e3");
+
+  return {
+    classify: cleanedClassification[0],
+    definition: cleanedClassification[1],
+  };
+};
+
+type HateSpeechScannerProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-export const HateSpeechScanner: FC<hateSpeechScannerprops> = ({
+export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
   isOpen,
   onClose,
 }) => {
   const [text, setText] = useState("");
   const [result, setResult] = useState<{
-    score: number;
-    category: string;
+    classify: string;
+    definition: string;
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -44,7 +70,7 @@ export const HateSpeechScanner: FC<hateSpeechScannerprops> = ({
     setIsLoading(true);
     setError(null);
     try {
-      const analysis = await mockAnalyzeText(text);
+      const analysis = await analyzeText(text);
       setResult(analysis);
       toast.success("Text analyzed successfully!");
     } catch (err) {
@@ -99,39 +125,23 @@ export const HateSpeechScanner: FC<hateSpeechScannerprops> = ({
                   {result && (
                     <div className="space-y-4">
                       <div
-                        className={`flex items-center p-4 rounded-md ${
-                          result.score > 0.7
+                        className={`flex flex-col items-center p-4 rounded-md ${
+                          result.classify === "hate speech"
                             ? "bg-red-100 text-red-700"
-                            : result.score > 0.4
-                            ? "bg-yellow-100 text-yellow-700"
                             : "bg-green-100 text-green-700"
                         }`}
                       >
-                        {result.score > 0.7 ? (
+                        {result.classify === "hate speech" ? (
                           <AlertTriangle className="h-4 w-4" />
                         ) : (
                           <CheckCircle className="h-4 w-4" />
                         )}
                         <p className="ml-2">
                           This text has been classified as{" "}
-                          {result.category.toLowerCase()} content.
+                          <strong>{result.classify.toLowerCase()}</strong>{" "}
+                          content.
+                          ***<strong>{result.definition}</strong>***
                         </p>
-                      </div>
-                      <div>
-                        <div className="flex justify-between mb-1">
-                          <span className="text-sm font-medium">
-                            Severity Score
-                          </span>
-                          <span className="text-sm font-medium">
-                            {(result.score * 100).toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 rounded-full h-2.5">
-                          <div
-                            className="bg-blue-600 h-2.5 rounded-full"
-                            style={{ width: `${result.score * 100}%` }}
-                          ></div>
-                        </div>
                       </div>
                     </div>
                   )}

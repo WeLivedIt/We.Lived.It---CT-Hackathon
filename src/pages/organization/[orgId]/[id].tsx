@@ -15,6 +15,9 @@ import { useRouter } from "next/router";
 import ABI from "../../../../contractFile.json";
 import { OrganizationLoader } from "@/components/Loader/OrganizationLoader";
 import { NoAccess } from "@/components/NoAccess";
+import { truncateWalletAddress } from "../../../../utils/truncateAddress";
+
+
 export default function Dashboard() {
   const router = useRouter();
 
@@ -123,7 +126,7 @@ export default function Dashboard() {
       {!notAllowed && (
         <div>
           <div className="flex justify-between items-center gap-4 bg-white p-6 shadow-md rounded-2xl mb-8">
-            <div className="bg-white p-6 shadow-md rounded-xl">
+            <div className="w-4/6 bg-white p-6 shadow-md rounded-xl">
               <h1 className="text-3xl font-semibold text-gray-800 mb-4">
                 Organization Details
               </h1>
@@ -140,7 +143,7 @@ export default function Dashboard() {
 
                 <div className="">
                   <span className="font-bold text-gray-700">Creator: </span>
-                  <span className="text-gray-600">{organization?.id}</span>
+                  <span className="text-gray-600">{truncateWalletAddress(organization?.id as string)}</span>
                 </div>
 
                 <div className="">
