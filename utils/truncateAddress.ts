@@ -6,4 +6,3 @@ export const  truncateWalletAddress = (address: string): string =>  {
     const end = address.slice(-4);
     return `${start}...${end}`;
   }
-  
