@@ -14,7 +14,7 @@ This platform empowers online communities to:
 - Fine-tune moderation models through community governance
 - Share improved models with other communities via blockchain
 - Access pre-trained models from other communities
-- 
+
 
 Toxic speech is rife in online spaces and even more so if you are from one or more marginalised communities. By incorporating this tool into a DAO, you are taking steps to creating an inclusive organisational culture by building in anti-hate mechanisms from the outset. 
 
