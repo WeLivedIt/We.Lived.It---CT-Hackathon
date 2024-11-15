@@ -328,9 +328,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                           <input
                             type="checkbox"
                             className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
-                            checked={experience.identityFactors.includes(
-                              factor
-                            )}
+                            checked={true}
                             onChange={(e) => {
                               const newFactors = e.target.checked
                                 ? [...experience.identityFactors, factor]
@@ -339,7 +337,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                                   );
                               setExperience({
                                 ...experience,
-                                identityFactors: newFactors,
+                             
                               });
                             }}
                           />
@@ -352,7 +350,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                         <input
                           type="checkbox"
                           className="form-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded"
-                          checked={experience.identityFactors.includes("Other")}
+                          checked={true}
                           onChange={(e) => {
                             const newFactors = e.target.checked
                               ? [...experience.identityFactors, "Other"]
@@ -361,22 +359,22 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                                 );
                             setExperience({
                               ...experience,
-                              identityFactors: newFactors,
+                         
                             });
                           }}
                         />
                         <span className="text-gray-700">Other:</span>
                       </label>
-                      {experience.identityFactors.includes("Other") && (
+                      {experience.identityFactors && (
                         <input
                           type="text"
                           placeholder="Specify other factor"
                           className="w-full mt-1 p-2 border rounded-lg"
-                          value={experience.otherIdentityFactor}
+                          value={""}
                           onChange={(e) =>
                             setExperience({
                               ...experience,
-                              otherIdentityFactor: e.target.value,
+                  
                             })
                           }
                         />
@@ -400,11 +398,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Describe any actions taken in response to the incident..."
-                        value={experience.responseAction}
+                        value={""}
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                            responseAction: e.target.value,
+                            
                           })
                         }
                         rows={3}
@@ -417,11 +415,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Explain if there was a reporting channel and if you used it..."
-                        value={experience.officialChannel}
+                        value={""}
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                            officialChannel: e.target.value,
+                         
                           })
                         }
                         rows={3}
@@ -433,11 +431,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Describe the outcome of any actions taken in response..."
-                        value={experience.actionOutcome}
+                        value={""}
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                            actionOutcome: e.target.value,
+                   
                           })
                         }
                         rows={3}
