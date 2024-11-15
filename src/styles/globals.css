@@ -25,3 +25,20 @@ body {
     text-wrap: balance;
   }
 }
+
+.step-indicator {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: inline-block;
+  text-align: center;
+  line-height: 30px;
+  margin-right: 10px;
+}
+
+.step-indicator.active {
+  background-color: #3b82f6; /* Blue color */
+  color: white;
+}
+

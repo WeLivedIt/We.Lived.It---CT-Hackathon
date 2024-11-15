@@ -4,6 +4,8 @@ import Link from "next/link";
 import { ReactNode } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter, faLinkedin } from '@fortawesome/free-brands-svg-icons'
+import Image from "next/image";
+import WLT from "../../Assets/Images/WeLivedIt_Logo.jpg"
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,19 +17,7 @@ export const HomeLayout = ({ children }: LayoutProps) => {
       <header className="w-full bg-white shadow-sm">
         <div className="flex justify-between mx-6 px-4 py-4 items-center">
           <div className="flex items-center space-x-4">
-            <svg
-              className="h-8 w-8 text-blue-600"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              />
-            </svg>
+            <Image src={WLT} width={48} height={48} alt="WelivedItBg" />
             <h1 className="text-xl font-bold text-gray-900">WeLivedIt.AI</h1>
           </div>
           <div className="flex items-center space-x-4">

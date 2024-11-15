@@ -1,58 +1,83 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BarChart, AlertTriangle, CheckCircle } from "lucide-react";
+import {
+  BarChart,
+  AlertTriangle,
+  CheckCircle,
+  UploadCloud,
+} from "lucide-react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+import { OrganizationParams } from "@/pages/organization";
 
 const cleanClassificationString = (classificationStr: string) => {
-  // Remove the outer quotes and convert it into an array-like structure
   const cleanedStr = classificationStr.replace(/(^"|"$)/g, "");
-
-  // Now we can safely evaluate it to convert into an array
-  const classificationArray = eval(cleanedStr); // Be cautious using eval, ensure input is sanitized
-
+  const classificationArray = eval(cleanedStr);
   return classificationArray;
 };
 
 const analyzeText = async (
-  text: string
+  text: string,
+  file: File | null,
+  orgData: OrganizationParams
 ): Promise<{ classify: string; definition: string }> => {
-  const response = await fetch("https://hs-server.onrender.com/classify-hs", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message: text }),
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to analyze text");
+
+  try {
+    // Convert BigInt values to strings before sending them
+    const safeOrgData = JSON.parse(
+      JSON.stringify(orgData, (key, value) =>
+        typeof value === "bigint" ? value.toString() : value
+      )
+    );
+
+    const formData = new FormData();
+    formData.append("message", text);
+    if (file) {
+      formData.append("file", file); // Add the file to the FormData
+    }
+    formData.append("orgData", JSON.stringify(safeOrgData));
+
+    const baseUrl = "http://localhost:8000/classify-hs";
+
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      body: formData, 
+    });
+
+    if (!response.ok) {
+      console.log(response, "happy");
+      throw new Error("Failed to analyze text");
+    }
+
+    const data = await response.json();
+    const { classification } = data;
+    const cleanedClassification = cleanClassificationString(classification);
+    return {
+      classify: cleanedClassification[0],
+      definition: cleanedClassification[1],
+    };
+  } catch (error) {
+    console.error("Error analyzing text:", error);
+    throw new Error(
+      "An error occurred while analyzing text. Please try again."
+    );
   }
-
-  const data = await response.json();
-
-  const { classification } = data;
-
-  const cleanedClassification = cleanClassificationString(classification);
-
-  console.log(cleanedClassification[0], "223e3");
-
-  return {
-    classify: cleanedClassification[0],
-    definition: cleanedClassification[1],
-  };
 };
 
 type HateSpeechScannerProps = {
   isOpen: boolean;
   onClose: () => void;
+  orgData: OrganizationParams;
 };
 
 export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
   isOpen,
   onClose,
+  orgData,
 }) => {
   const [text, setText] = useState("");
+  const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<{
     classify: string;
     definition: string;
@@ -60,17 +85,34 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadedFile = event.target.files?.[0];
+    if (
+      uploadedFile &&
+      (uploadedFile.type === "application/pdf" ||
+        uploadedFile.type === "application/msword" ||
+        uploadedFile.type ===
+          "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+    ) {
+      setFile(uploadedFile);
+      setError(null);
+      toast.success("File uploaded successfully!");
+    } else {
+      setError("Please upload a PDF or DOC/DOCX file.");
+      toast.error("Invalid file type. Only PDF and DOC/DOCX are supported.");
+    }
+  };
+
   const handleAnalyze = async () => {
-    if (!text.trim()) {
-      setError("Please enter some text to analyze.");
-      toast.error("Please enter some text to analyze.");
+    if (!text.trim() && !file) {
+      setError("Please enter text or upload a file to analyze.");
       return;
     }
 
     setIsLoading(true);
     setError(null);
     try {
-      const analysis = await analyzeText(text);
+      const analysis = await analyzeText(text, file, orgData);
       setResult(analysis);
       toast.success("Text analyzed successfully!");
     } catch (err) {
@@ -80,6 +122,8 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
       );
     } finally {
       setIsLoading(false);
+      setText("")
+      setFile(null)
     }
   };
 
@@ -101,13 +145,32 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                 <div className="mb-4">
                   <h2 className="text-2xl font-bold flex items-center space-x-2">
                     <BarChart className="h-6 w-6 text-blue-500" />
-                    <span>Hate Speech Scanner</span>
+                    <span>Text Scanner</span>
                   </h2>
                   <p className="text-sm text-gray-600">
-                    Input text to analyze for potential hate speech. Our AI
-                    model will provide an assessment.
+                    Our AI model will provide an assessment.’ to ‘Input the text
+                    below. Our model will give you an assessment
                   </p>
                 </div>
+
+                {/* Upload and Drag-and-Drop Section */}
+                <div className="mb-4 border border-dashed border-gray-400 p-4 rounded-md text-center">
+                  <label htmlFor="fileUpload" className="cursor-pointer">
+                    <UploadCloud className="h-12 w-12 mx-auto text-blue-500" />
+                    <p className="text-gray-600">
+                      Drag & Drop or Click to Upload (PDF, DOC, DOCX)
+                    </p>
+                  </label>
+                  <input
+                    id="fileUpload"
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                  <p className="text-green-700 w-full truncate">{file?.name}</p>
+                </div>
+
                 <div className="mb-4">
                   <textarea
                     placeholder="Enter text to analyze..."
@@ -124,28 +187,37 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                   )}
                   {result && (
                     <div className="space-y-4">
+                      {/* Classification Result Section */}
                       <div
-                        className={`flex flex-col items-center p-4 rounded-md ${
+                        className={`flex items-center p-4 rounded-md ${
                           result.classify === "hate speech"
                             ? "bg-red-100 text-red-700"
                             : "bg-green-100 text-green-700"
                         }`}
                       >
                         {result.classify === "hate speech" ? (
-                          <AlertTriangle className="h-4 w-4" />
+                          <AlertTriangle className="h-5 w-5 mr-2" />
                         ) : (
-                          <CheckCircle className="h-4 w-4" />
+                          <CheckCircle className="h-5 w-5 mr-2" />
                         )}
-                        <p className="ml-2">
+                        <p>
                           This text has been classified as{" "}
                           <strong>{result.classify.toLowerCase()}</strong>{" "}
                           content.
-                          ***<strong>{result.definition}</strong>***
                         </p>
+                      </div>
+
+                      {/* Definition Section */}
+                      <div className="p-4 bg-gray-100 border-l-4 border-gray-500 rounded-md">
+                        <h3 className="font-semibold text-gray-800">
+                          Definition:
+                        </h3>
+                        <p className="text-gray-700">{result.definition}</p>
                       </div>
                     </div>
                   )}
                 </div>
+
                 <button
                   onClick={handleAnalyze}
                   disabled={isLoading}

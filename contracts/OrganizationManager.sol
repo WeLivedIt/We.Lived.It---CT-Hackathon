@@ -8,6 +8,7 @@ contract OrganizationManager {
         string context;
         string[] hateSpeechCategories;
         address admin;
+        string model; 
         bool isPrivate; 
     }
 
@@ -16,8 +17,8 @@ contract OrganizationManager {
 
     uint public nextOrgId; 
 
-    event OrganizationCreated(address indexed admin, uint orgId, string communityType, string context, bool isPrivate);
-    event OrganizationUpdated(address indexed admin, uint orgId, string communityType, string context, bool isPrivate);
+    event OrganizationCreated(address indexed admin, uint orgId, string communityType, string context, string model, bool isPrivate);
+    event OrganizationUpdated(address indexed admin, uint orgId, string communityType, string context, string model, bool isPrivate);
     event HateSpeechCategoriesUpdated(address indexed admin, uint orgId, string[] newCategories);
 
     modifier onlyAdmin(uint orgIndex) {
@@ -33,6 +34,7 @@ contract OrganizationManager {
         string memory _communityType,
         string memory _context,
         string[] memory _hateSpeechCategories,
+        string memory _model, 
         bool _isPrivate 
     ) public {
         uint orgId = nextOrgId; 
@@ -44,6 +46,7 @@ contract OrganizationManager {
             context: _context,
             hateSpeechCategories: _hateSpeechCategories,
             admin: msg.sender,
+            model: _model,  
             isPrivate: _isPrivate 
         }));
 
@@ -51,21 +54,23 @@ contract OrganizationManager {
             organizationAddresses.push(msg.sender);
         }
 
-        emit OrganizationCreated(msg.sender, orgId, _communityType, _context, _isPrivate);
+        emit OrganizationCreated(msg.sender, orgId, _communityType, _context, _model, _isPrivate);
     }
 
     function updateOrganization(
         uint orgIndex,
         string memory _communityType,
         string memory _context,
+        string memory _model, 
         bool _isPrivate 
     ) public onlyAdmin(orgIndex) {
         Organization storage org = organizations[msg.sender][orgIndex];
         org.communityType = _communityType;
         org.context = _context;
+        org.model = _model; 
         org.isPrivate = _isPrivate;
 
-        emit OrganizationUpdated(msg.sender, org.orgId, _communityType, _context, _isPrivate);
+        emit OrganizationUpdated(msg.sender, org.orgId, _communityType, _context, _model, _isPrivate);
     }
 
     function updateHateSpeechCategories(uint orgIndex, string[] memory _newCategories) public onlyAdmin(orgIndex) {
@@ -80,13 +85,14 @@ contract OrganizationManager {
         string memory communityType,
         string memory context,
         string[] memory hateSpeechCategories,
+        string memory model, 
         bool isPrivate 
     ) {
         Organization[] storage orgs = organizations[_admin];
         for (uint i = 0; i < orgs.length; i++) {
             if (orgs[i].orgId == _orgId) {
                 Organization storage org = orgs[i];
-                return (org.orgId, org.communityType, org.context, org.hateSpeechCategories, org.isPrivate);
+                return (org.orgId, org.communityType, org.context, org.hateSpeechCategories, org.model, org.isPrivate);  // Including model
             }
         }
         revert("Organization not found."); 
