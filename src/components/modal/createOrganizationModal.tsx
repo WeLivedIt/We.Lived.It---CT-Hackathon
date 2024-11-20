@@ -6,6 +6,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { OrganizationParams } from "@/pages/organization";
 import { OrganizationLoader } from "@/components/Loader/OrganizationLoader";
 import { HomeLayout } from "@/components/Layout/HomeLayout";
+import { useAccount, useContractRead } from "wagmi";
 
 const defaultHateCategories = [
   "race",
@@ -38,6 +39,7 @@ export const CreateOrganizationModal: FC<CreateOrganizationParams> = ({
     isPending,
   } = useWriteContract();
 
+  const { address } = useAccount();
   const [additionalCategory, setAdditionalCategory] = useState<string>("");
   const [isClonedOrg, setIsClonedOrg] = useState(false);
   const [selectedOrg, setSelectedOrg] = useState<OrganizationParams | null>(
@@ -59,7 +61,7 @@ export const CreateOrganizationModal: FC<CreateOrganizationParams> = ({
   const handleCreateOrg = async () => {
     let orgName = newOrg.communityType;
 
-    if (orgName.toUpperCase().endsWith(".AI")) {
+    if (!orgName.toUpperCase().endsWith(".AI")) {
       orgName = `${newOrg.communityType}.AI`.toUpperCase();
     }
 
@@ -77,7 +79,7 @@ export const CreateOrganizationModal: FC<CreateOrganizationParams> = ({
           abi: ABI.abi,
           functionName: "createOrganization",
           args: [
-            newOrg.communityType || orgName,
+            orgName,
             newOrg.context,
             newOrg.hateCategories,
             newOrg.model,
@@ -363,10 +365,12 @@ export const CreateOrganizationModal: FC<CreateOrganizationParams> = ({
           </button>
           <button
             onClick={handleCreateOrg}
-            className="px-4 py-2 bg-blue-500 rounded text-white"
-            disabled={status === "pending"}
+            className={`px-4 py-2 bg-blue-500 rounded text-white ${
+              address ? "cursor-pointer" : "cursor-not-allowed"
+            }`}
+            disabled={status === "pending" || !address}
           >
-            Save Organization
+            {address ? "Save Organization" : "Not Connected"}
           </button>
         </div>
       </div>

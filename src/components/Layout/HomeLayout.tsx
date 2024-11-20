@@ -2,10 +2,14 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { ReactNode } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faFacebook, faTwitter, faLinkedin } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faFacebook,
+  faTwitter,
+  faLinkedin,
+} from "@fortawesome/free-brands-svg-icons";
 import Image from "next/image";
-import WLT from "../../Assets/Images/WeLivedIt_Logo.jpg"
+import WLT from "../../Assets/Images/WeLivedIt_Logo.jpg";
 
 interface LayoutProps {
   children: ReactNode;
@@ -27,7 +31,9 @@ export const HomeLayout = ({ children }: LayoutProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="w-full flex-grow px-12 py-8 overflow-scroll">{children}</main>
+      <main className="w-full flex-grow px-12 py-8 overflow-scroll">
+        {children}
+      </main>
 
       {/* Footer */}
       <footer className="bg-gray-800 text-white">
@@ -61,19 +67,19 @@ export const HomeLayout = ({ children }: LayoutProps) => {
               </ul>
             </div>
             <div>
-      <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
-      <div className="flex space-x-4">
-        <a href="#" className="text-gray-300 hover:text-white">
-          <FontAwesomeIcon icon={faFacebook} size="lg" />
-        </a>
-        <a href="#" className="text-gray-300 hover:text-white">
-          <FontAwesomeIcon icon={faTwitter} size="lg" />
-        </a>
-        <a href="#" className="text-gray-300 hover:text-white">
-          <FontAwesomeIcon icon={faLinkedin} size="lg" />
-        </a>
-      </div>
-    </div>
+              <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
+              <div className="flex space-x-4">
+                <a href="#" className="text-gray-300 hover:text-white">
+                  <FontAwesomeIcon icon={faFacebook} size="lg" />
+                </a>
+                <a href="#" className="text-gray-300 hover:text-white">
+                  <FontAwesomeIcon icon={faTwitter} size="lg" />
+                </a>
+                <a href="#" className="text-gray-300 hover:text-white">
+                  <FontAwesomeIcon icon={faLinkedin} size="lg" />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
