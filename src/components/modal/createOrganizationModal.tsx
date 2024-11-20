@@ -59,7 +59,7 @@ export const CreateOrganizationModal: FC<CreateOrganizationParams> = ({
   const handleCreateOrg = async () => {
     let orgName = newOrg.communityType;
 
-    if (!orgName.toUpperCase().endsWith(".AI")) {
+    if (orgName.toUpperCase().endsWith(".AI")) {
       orgName = `${newOrg.communityType}.AI`.toUpperCase();
     }
 
