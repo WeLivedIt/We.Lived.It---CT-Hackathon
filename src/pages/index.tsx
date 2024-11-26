@@ -5,7 +5,7 @@ const Index = () => {
 export const getServerSideProps = async () => {
   return {
     redirect: {
-      destination: '/organization', 
+      destination: '/home', 
       permanent: false, 
     },
   };

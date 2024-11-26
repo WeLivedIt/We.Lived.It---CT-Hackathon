@@ -10,17 +10,22 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 import Image from "next/image";
 import WLT from "../../Assets/Images/WeLivedIt_Logo.jpg";
+import { useRouter } from "next/router";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 export const HomeLayout = ({ children }: LayoutProps) => {
+  const router = useRouter();
   return (
     <div className="w-screen min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex flex-col">
       <header className="w-full bg-white shadow-sm">
         <div className="flex justify-between mx-6 px-4 py-4 items-center">
-          <div className="flex items-center space-x-4">
+          <div
+            className="flex items-center space-x-4 cursor-pointer"
+            onClick={() => router.push("/home")}
+          >
             <Image src={WLT} width={48} height={48} alt="WelivedItBg" />
             <h1 className="text-xl font-bold text-gray-900">WeLivedIt.AI</h1>
           </div>

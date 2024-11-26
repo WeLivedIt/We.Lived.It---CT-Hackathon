@@ -2,16 +2,15 @@
 
 import React, { useState, FC } from "react";
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
+import { PinataSDK } from "pinata";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/router";
 
-const mockSubmitExperience = async (
-  experience: any
-): Promise<{ success: boolean; message: string }> => {
-  await new Promise((resolve) => setTimeout(resolve, 1500));
-  return {
-    success: true,
-    message: "Your experience has been successfully submitted.",
-  };
-};
+const pinata = new PinataSDK({
+  pinataJwt: process.env.NEXT_PUBLIC_PINATA_JWT!,
+  pinataGateway: process.env.NEXT_PUBLIC_PINATA_JWT,
+});
 
 type SubmitExperienceProps = {
   isOpen: boolean;
@@ -40,6 +39,8 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
     willingToContact: false,
     verification: "",
   });
+  const router = useRouter();
+
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,15 +48,44 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
 
   const handleNext = () => setStep((prev) => Math.min(prev + 1, 5));
   const handleBack = () => setStep((prev) => Math.max(prev - 1, 1));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
     setSuccess(null);
+
     try {
-      const result = await mockSubmitExperience(experience);
-      if (result.success) {
-        setSuccess(result.message);
+      const metadata = {
+        pinataContent: experience,
+        pinataMetadata: {
+          name: "Experience Submission",
+          keyvalues: {
+            date: experience.date || null,
+            platform: experience.platform || null,
+            type: experience.type || null,
+            dataSubmission: experience.dataSubmission || null,
+            contextSimilarIncidents: experience.contextSimilarIncidents || null,
+            contextCircumstances: experience.contextCircumstances || null,
+            impactPersonal: experience.impactPersonal || null,
+            impactCommunity: experience.impactCommunity || null,
+            impactSeverity: experience.impactSeverity.toString(),
+            identityFactors: experience.identityFactors.join(", "),
+            responseActions: experience.responseActions || null,
+            responseReport: experience.responseReport || null,
+            responseOutcome: experience.responseOutcome || null,
+            additionalInfo: experience.additionalInfo || null,
+            willingToContact: experience.willingToContact ? "true" : "false",
+            verification: experience.verification || null,
+          },
+        },
+      };
+
+      const result = await pinata.upload.json(metadata);
+
+      if (result) {
+        toast.success("Submission successful!");
+
         setExperience({
           date: "",
           platform: "",
@@ -75,11 +105,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
           verification: "",
         });
       } else {
-        setError("Failed to submit experience. Please try again.");
+        throw new Error("Failed to pin data to IPFS.");
       }
-    } catch {
+    } catch (err: any) {
       setError(
-        "An error occurred while submitting your experience. Please try again."
+        err.message || "An error occurred while submitting your experience."
       );
     } finally {
       setIsLoading(false);
@@ -104,9 +134,6 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
               </p>
 
               <form onSubmit={handleSubmit}>
-                {/* Insert your step logic here */}
-                {/* Step content as per your requirements */}
-
                 {step === 1 && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">
@@ -173,44 +200,6 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                     </label>
                   </div>
                 )}
-                {/* {step === 2 && (
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">
-                      Step 2: Type & Data Submission
-                    </h3>
-                    <label className="block">
-                      Type:
-                      <select
-                        className="w-full mt-1 p-2 border rounded-lg"
-                        value={experience.type}
-                        onChange={(e) =>
-                          setExperience({ ...experience, type: e.target.value })
-                        }
-                        required
-                      >
-                        <option value="">Select type</option>
-                        <option>Email</option>
-                        <option>Comment section</option>
-                        <option>Social Media Post</option>
-                      </select>
-                    </label>
-                    <label className="block">
-                      Data Submission:
-                      <textarea
-                        className="w-full mt-1 p-2 border rounded-lg"
-                        placeholder="Attach or paste relevant data, such as screenshots, transcripts, or records"
-                        value={experience.dataSubmission}
-                        onChange={(e) =>
-                          setExperience({
-                            ...experience,
-                            dataSubmission: e.target.value,
-                          })
-                        }
-                        required
-                      />
-                    </label>
-                  </div>
-                )} */}
                 {step === 2 && (
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Step 2: Context</h3>
@@ -337,7 +326,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                                   );
                               setExperience({
                                 ...experience,
-                             
+                                identityFactors: newFactors as any,
                               });
                             }}
                           />
@@ -345,7 +334,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                         </label>
                       ))}
 
-                      {/* Other Factor with Input Field */}
+                      {/* Other Input */}
                       <label className="flex items-center space-x-2">
                         <input
                           type="checkbox"
@@ -359,22 +348,22 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                                 );
                             setExperience({
                               ...experience,
-                         
+                              identityFactors: newFactors as any,
                             });
                           }}
                         />
                         <span className="text-gray-700">Other:</span>
                       </label>
-                      {experience.identityFactors && (
+                      {experience?.identityFactors && (
                         <input
                           type="text"
                           placeholder="Specify other factor"
                           className="w-full mt-1 p-2 border rounded-lg"
-                          value={""}
+                          value={experience.additionalInfo || ""}
                           onChange={(e) =>
                             setExperience({
                               ...experience,
-                  
+                              additionalInfo: e.target.value,
                             })
                           }
                         />
@@ -398,11 +387,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Describe any actions taken in response to the incident..."
-                        value={""}
+                        value={experience.responseActions} // Correctly link to the state
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                            
+                            responseActions: e.target.value, // Update the relevant property in state
                           })
                         }
                         rows={3}
@@ -415,11 +404,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Explain if there was a reporting channel and if you used it..."
-                        value={""}
+                        value={experience.responseReport} // Correctly link to the state
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                         
+                            responseReport: e.target.value, // Update the relevant property in state
                           })
                         }
                         rows={3}
@@ -431,11 +420,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Describe the outcome of any actions taken in response..."
-                        value={""}
+                        value={experience.responseOutcome} // Correctly link to the state
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                   
+                            responseOutcome: e.target.value, // Update the relevant property in state
                           })
                         }
                         rows={3}
@@ -450,11 +439,11 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                       <textarea
                         className="w-full mt-1 p-2 border rounded-lg"
                         placeholder="Provide any further context to help others understand your experience..."
-                        value={experience.additionalInfo}
+                        value={experience.additionalInfo} // Correctly link to the state
                         onChange={(e) =>
                           setExperience({
                             ...experience,
-                            additionalInfo: e.target.value,
+                            additionalInfo: e.target.value, // Update the relevant property in state
                           })
                         }
                         rows={3}
@@ -482,7 +471,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                           onChange={(e) =>
                             setExperience({
                               ...experience,
-                              verification: e.target.value,
+                              verification: e.target.value, // Update the relevant property in state
                             })
                           }
                         />
@@ -498,7 +487,7 @@ export const SubmitExperience: FC<SubmitExperienceProps> = ({
                           onChange={(e) =>
                             setExperience({
                               ...experience,
-                              verification: e.target.value,
+                              verification: e.target.value, // Update the relevant property in state
                             })
                           }
                         />

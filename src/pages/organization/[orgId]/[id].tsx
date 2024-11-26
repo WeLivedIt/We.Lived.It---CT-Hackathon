@@ -127,10 +127,7 @@ export default function Dashboard() {
   const telegramBotUrl = `https://t.me/WeLivedItBot?start=${organization?.communityType
     .toString()
     .replace(/\.AI$/, "")
-    .replace(/\s+/g, '-')}`;
-
-
-  console.log(`Telegram Bot URL: ${telegramBotUrl}`);
+    .replace(/\s+/g, "-")}`;
 
   return (
     <HomeLayout>

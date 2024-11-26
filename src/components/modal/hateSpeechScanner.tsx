@@ -21,10 +21,7 @@ const analyzeText = async (
   file: File | null,
   orgData: OrganizationParams
 ): Promise<{ classify: string; definition: string }> => {
-
-
   try {
-    // Convert BigInt values to strings before sending them
     const safeOrgData = JSON.parse(
       JSON.stringify(orgData, (key, value) =>
         typeof value === "bigint" ? value.toString() : value
@@ -38,11 +35,11 @@ const analyzeText = async (
     }
     formData.append("orgData", JSON.stringify(safeOrgData));
 
-    const baseUrl = "http://localhost:8000/classify-hs";
+    const baseUrl = "https://hs-server-1.onrender.com/classify-hs";
 
     const response = await fetch(baseUrl, {
       method: "POST",
-      body: formData, 
+      body: formData,
     });
 
     if (!response.ok) {
@@ -122,8 +119,8 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
       );
     } finally {
       setIsLoading(false);
-      setText("")
-      setFile(null)
+      setText("");
+      setFile(null);
     }
   };
 
@@ -153,7 +150,6 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                   </p>
                 </div>
 
-                {/* Upload and Drag-and-Drop Section */}
                 <div className="mb-4 border border-dashed border-gray-400 p-4 rounded-md text-center">
                   <label htmlFor="fileUpload" className="cursor-pointer">
                     <UploadCloud className="h-12 w-12 mx-auto text-blue-500" />
@@ -187,7 +183,6 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                   )}
                   {result && (
                     <div className="space-y-4">
-                      {/* Classification Result Section */}
                       <div
                         className={`flex items-center p-4 rounded-md ${
                           result.classify === "hate speech"
@@ -207,7 +202,6 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                         </p>
                       </div>
 
-                      {/* Definition Section */}
                       <div className="p-4 bg-gray-100 border-l-4 border-gray-500 rounded-md">
                         <h3 className="font-semibold text-gray-800">
                           Definition:
