@@ -1,3 +1,3 @@
-export const votes = () => {
+export default function votes() {
   return <div>Hi</div>;
-};
+}
