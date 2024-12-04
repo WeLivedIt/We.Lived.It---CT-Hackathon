@@ -35,6 +35,7 @@ const analyzeText = async (
     }
     formData.append("orgData", JSON.stringify(safeOrgData));
 
+    // const baseUrl = "http://localhost:8000/classify-hs";
     const baseUrl = "https://hs-server-1.onrender.com/classify-hs";
 
     const response = await fetch(baseUrl, {
@@ -77,7 +78,7 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<{
     classify: string;
-    definition: string;
+    definition: string[];
   } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -206,7 +207,9 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                         <h3 className="font-semibold text-gray-800">
                           Definition:
                         </h3>
-                        <p className="text-gray-700">{result.definition}</p>
+                        <p className="text-gray-700">
+                          {result.definition[0]}, {result.definition[1]}, {result.definition[3]}
+                        </p>
                       </div>
                     </div>
                   )}

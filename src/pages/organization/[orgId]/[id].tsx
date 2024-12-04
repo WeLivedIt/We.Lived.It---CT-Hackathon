@@ -19,6 +19,7 @@ import { truncateWalletAddress } from "../../../../utils/truncateAddress";
 import { OrganizationParams } from "..";
 import { DiscordIcon } from "@/Assets/Icon/DiscordIcon";
 import { TelegramIcon } from "@/Assets/Icon/TelegramIcon";
+import { CommunityVoting } from "@/components/modal/communityVoting";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -307,6 +308,12 @@ export default function Dashboard() {
         <CommunityConfiguration
           isOpen={openCommunityConfigurations}
           onClose={() => setCommunityConfiguration(false)}
+        />
+      )}
+      {openCommunityVote && (
+        <CommunityVoting
+          isOpen={openCommunityVote}
+          onClose={() => setCommunityVote(false)}
         />
       )}
     </HomeLayout>

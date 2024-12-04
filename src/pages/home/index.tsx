@@ -143,8 +143,16 @@ export default function HomePage() {
                   Share What Works
                 </h3>
                 <p className="text-gray-700">
-                  Communities with similar values can build on each other's
-                  learnings, creating a network of more inclusive spaces.
+                  When your community spends time developing an effective model
+                  that can moderate according to their values, the trained model
+                  is recorded on the blockchain. This means it is available for
+                  other communities with similar values. For example, if a
+                  women's tech community creates an effective model for
+                  inclusive language, another organisation working with
+                  marginalised genders in tech can immediately adopt and build
+                  upon it. Each community that uses a shared model helps improve
+                  it, creating a growing network of trusted, community-tested
+                  solutions.
                 </p>
               </div>
             </div>
