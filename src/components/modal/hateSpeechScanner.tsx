@@ -20,7 +20,7 @@ const analyzeText = async (
   text: string,
   file: File | null,
   orgData: OrganizationParams
-): Promise<{ classify: string; definition: string }> => {
+): Promise<{ classify: string; definition: string[] }> => {
   try {
     const safeOrgData = JSON.parse(
       JSON.stringify(orgData, (key, value) =>
@@ -53,7 +53,7 @@ const analyzeText = async (
     const cleanedClassification = cleanClassificationString(classification);
     return {
       classify: cleanedClassification[0],
-      definition: cleanedClassification[1],
+      definition: cleanedClassification[1] ,
     };
   } catch (error) {
     console.error("Error analyzing text:", error);
