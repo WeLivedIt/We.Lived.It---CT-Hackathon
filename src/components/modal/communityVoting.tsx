@@ -69,7 +69,7 @@ export const CommunityVoting: FC<CommunityVotingProps> = ({
       const result = await mockVote(id, voteType);
       if (result.success) {
         setSubmissions(
-          (prevSubmissions) =>
+          (prevSubmissions: any) =>
             prevSubmissions?.map((sub) =>
               sub.id === id
                 ? {
