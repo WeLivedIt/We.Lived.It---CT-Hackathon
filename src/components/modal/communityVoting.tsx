@@ -49,7 +49,7 @@ export const CommunityVoting: FC<CommunityVotingProps> = ({
   const [submissions, setSubmissions] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(null);
+  const [success, setSuccess] = useState("");
 
   const fetchSubmissions = async () => {
     setIsLoading(true);
@@ -70,7 +70,7 @@ export const CommunityVoting: FC<CommunityVotingProps> = ({
       if (result.success) {
         setSubmissions(
           (prevSubmissions: any) =>
-            prevSubmissions?.map((sub) =>
+            prevSubmissions?.map((sub: any) =>
               sub.id === id
                 ? {
                     ...sub,
@@ -138,7 +138,7 @@ export const CommunityVoting: FC<CommunityVotingProps> = ({
                 )}
 
                 {submissions &&
-                  submissions.map((submission, index) => (
+                  submissions.map((submission: any, index: any) => (
                     <div
                       key={submission.id}
                       className="border rounded-md p-4 bg-gray-50"
