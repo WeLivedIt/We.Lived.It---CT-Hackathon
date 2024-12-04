@@ -11,9 +11,32 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { OrganizationParams } from "@/pages/organization";
 
 const cleanClassificationString = (classificationStr: string) => {
-  const cleanedStr = classificationStr.replace(/(^"|"$)/g, "");
-  const classificationArray = eval(cleanedStr);
-  return classificationArray;
+  try {
+    const cleanedStr = classificationStr.replace(/(^"|"$)/g, "");
+    if (cleanedStr.startsWith("[") && cleanedStr.endsWith("]")) {
+      return eval(cleanedStr);
+    }
+  } catch (error) {}
+
+  if (classificationStr.includes("hate speech")) {
+    const classification = "hate speech";
+    const protectedCharacteristicMatch = classificationStr.match(
+      /protected characteristic of (\w+)/i
+    );
+    const protectedCharacteristic = protectedCharacteristicMatch
+      ? [protectedCharacteristicMatch[1]]
+      : [];
+    const probabilityMatch = classificationStr.match(
+      /probability.*?(\d\.\d+)/i
+    );
+    const probability = probabilityMatch
+      ? [parseFloat(probabilityMatch[1])]
+      : [1.0]; 
+
+    return [classification, protectedCharacteristic, probability];
+  }
+
+  return ["unknown", [], [0]];
 };
 
 const analyzeText = async (
@@ -31,7 +54,7 @@ const analyzeText = async (
     const formData = new FormData();
     formData.append("message", text);
     if (file) {
-      formData.append("file", file); // Add the file to the FormData
+      formData.append("file", file); 
     }
     formData.append("orgData", JSON.stringify(safeOrgData));
 
@@ -53,7 +76,7 @@ const analyzeText = async (
     const cleanedClassification = cleanClassificationString(classification);
     return {
       classify: cleanedClassification[0],
-      definition: cleanedClassification[1] ,
+      definition: cleanedClassification[1],
     };
   } catch (error) {
     console.error("Error analyzing text:", error);
@@ -208,7 +231,8 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                           Definition:
                         </h3>
                         <p className="text-gray-700">
-                          {result.definition[0]}, {result.definition[1]}, {result.definition[3]}
+                          {result.definition[0]}, {result.definition[1]},{" "}
+                          {result.definition[3]}
                         </p>
                       </div>
                     </div>
