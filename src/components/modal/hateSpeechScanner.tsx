@@ -31,7 +31,7 @@ const cleanClassificationString = (classificationStr: string) => {
     );
     const probability = probabilityMatch
       ? [parseFloat(probabilityMatch[1])]
-      : [1.0]; 
+      : [1.0];
 
     return [classification, protectedCharacteristic, probability];
   }
@@ -54,7 +54,7 @@ const analyzeText = async (
     const formData = new FormData();
     formData.append("message", text);
     if (file) {
-      formData.append("file", file); 
+      formData.append("file", file);
     }
     formData.append("orgData", JSON.stringify(safeOrgData));
 
@@ -231,7 +231,8 @@ export const HateSpeechScanner: FC<HateSpeechScannerProps> = ({
                           Definition:
                         </h3>
                         <p className="text-gray-700">
-                          {result.definition[0]}, {result.definition[1]},{" "}
+                          {result.definition[0]} {result.definition[1]}
+                          {result.definition[2]}
                           {result.definition[3]}
                         </p>
                       </div>
